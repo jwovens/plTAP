@@ -15,6 +15,38 @@ AS
     
     FUNCTION run_tests(ut_schema  VARCHAR2, ut_package VARCHAR2)
         RETURN tapstream_tab_type PIPELINED;
+    
+    -- Test that strings match
+    FUNCTION thisisthat(have VARCHAR2, want VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2;
+    
+    -- Test that numbers match
+    FUNCTION thisisthat(have NUMBER, want NUMBER, msg VARCHAR2)
+    RETURN VARCHAR2;
+    
+    -- Test that strings do not match
+    FUNCTION thisisntthat(have VARCHAR2, want VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2;
+    
+    -- Test that numbers do not match 
+    FUNCTION thisisntthat(have NUMBER, want NUMBER, msg VARCHAR2)
+    RETURN VARCHAR2;
+
+    -- Test that 'this' matches wildcard pattern 'alike'
+    FUNCTION alike(this VARCHAR2, alike VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2;
+
+    -- Test that 'this' matches wildcard pattern 'alike' case insensitive
+    FUNCTION ialike(this VARCHAR2, alike VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2;
+
+    -- Test that 'this' and 'that' parameters resolve to true given by operator, 'op'
+    FUNCTION cmp_ok(this VARCHAR2, op VARCHAR2, that VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2;
+
+    -- Test that 'this' and 'that' parameters resolve to true given by operator, 'op'
+    FUNCTION cmp_ok(this NUMBER, op VARCHAR2, that NUMBER, msg VARCHAR2)
+    RETURN VARCHAR2;
         
 END tap;
 /
@@ -74,6 +106,69 @@ AS
                END || pl_field_separate || msg;
     END ok;
 --------------------------------------------------------------------------------
+    FUNCTION thisisthat(have VARCHAR2, want VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+    BEGIN
+        RETURN ok(have=want, msg);
+    END thisisthat;
+--------------------------------------------------------------------------------
+    FUNCTION thisisthat(have NUMBER, want NUMBER, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+    BEGIN
+        RETURN ok(have=want, msg);
+    END thisisthat;   
+--------------------------------------------------------------------------------
+    FUNCTION thisisntthat(have VARCHAR2, want VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+    BEGIN
+        RETURN ok(have!=want, msg);
+    END thisisntthat;
+--------------------------------------------------------------------------------
+    FUNCTION thisisntthat(have NUMBER, want NUMBER, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+    BEGIN
+        RETURN ok(have!=want, msg);
+    END thisisntthat; 
+--------------------------------------------------------------------------------
+    FUNCTION alike(this VARCHAR2, alike VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+    BEGIN
+        RETURN ok(this LIKE alike, msg);
+    END alike; 
+--------------------------------------------------------------------------------
+    FUNCTION ialike(this VARCHAR2, alike VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+    BEGIN
+        RETURN ok(lower(this) LIKE lower(alike), msg);
+    END ialike; 
+--------------------------------------------------------------------------------
+    FUNCTION cmp_ok(this VARCHAR2, op VARCHAR2, that VARCHAR2, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+        l_res number;
+    BEGIN
+        EXECUTE IMMEDIATE 
+            'begin if '''||this||''''||op||''''||that||''' then :l_res := 1; else :l_res := 0; end if; end;'
+        USING OUT l_res;
+        RETURN ok(l_res=1, msg);
+    END cmp_ok; 
+--------------------------------------------------------------------------------
+    FUNCTION cmp_ok(this NUMBER, op VARCHAR2, that NUMBER, msg VARCHAR2)
+    RETURN VARCHAR2
+    AS
+        l_res number;
+    BEGIN
+        EXECUTE IMMEDIATE 
+            'begin if '||this||''||op||''||that||' then :l_res := 1; else :l_res := 0; end if; end;'
+        USING OUT l_res;
+        RETURN ok(l_res=1, msg);
+    END cmp_ok; 
 END tap;
 /
 
