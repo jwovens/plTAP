@@ -1,4 +1,11 @@
-DROP USER pltap CASCADE
+DECLARE
+    user_not_exists EXCEPTION;
+    PRAGMA EXCEPTION_INIT (user_not_exists, -01918);
+BEGIN
+    EXECUTE IMMEDIATE 'DROP USER pltap CASCADE';
+EXCEPTION
+    WHEN user_not_exists THEN NULL;
+END;
 /
 
 CREATE USER pltap IDENTIFIED BY hello
