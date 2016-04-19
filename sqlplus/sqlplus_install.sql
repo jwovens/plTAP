@@ -183,4 +183,4 @@ GRANT EXECUTE ON &pltap_schema..tap TO PUBLIC
 /
 CREATE OR REPLACE PUBLIC SYNONYM tap FOR &pltap_schema..tap
 /
-exit
+
