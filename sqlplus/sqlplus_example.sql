@@ -1,10 +1,18 @@
-DROP USER example_tap CASCADE
+def example_schema=&1
+DECLARE
+    user_not_exists EXCEPTION;
+    PRAGMA EXCEPTION_INIT (user_not_exists, -01918);
+BEGIN
+    EXECUTE IMMEDIATE 'DROP USER &example_schema CASCADE';
+EXCEPTION
+    WHEN user_not_exists THEN NULL;
+END;
 /
 
-CREATE USER example_tap IDENTIFIED BY hello
+CREATE USER &example_schema IDENTIFIED BY hello
 /
 
-CREATE OR REPLACE PACKAGE example_tap.mytests
+CREATE OR REPLACE PACKAGE &example_schema..mytests
 AS
     FUNCTION test_tap       RETURN VARCHAR2;
     FUNCTION test_tap_2     RETURN VARCHAR2;
@@ -22,7 +30,7 @@ AS
     
 END mytests;
 /
-CREATE OR REPLACE PACKAGE BODY example_tap.mytests
+CREATE OR REPLACE PACKAGE BODY &example_schema..mytests
 AS
     FUNCTION test_tap    RETURN VARCHAR2
     IS 

@@ -1,7 +1,7 @@
 # plTAP
 ### A TAP emititng framework for Oracle PL/SQL
 
-This is an attempt to write a lightweight TAP emitting framework for Oracle's procedural language PL/SQL.  
+This is an attempt to write a lightweight TAP emitting framework for Oracle's procedural language PL/SQL.
 
 TAP stands for [Test Anything Protocol](https://testanything.org/) ... "a simple text-based interface between testing modules in a test harness." It started life as a Perl test suite, but has spawned implementations in many other languages, perhaps due to its human readable output and therefore ease of implementation and extension according to environment.
 
@@ -9,15 +9,25 @@ This project has taken inspiration from [PostgreSQL's excellent pgTAP extension]
 
 This code contains Oracle SQL and PL/SQL only, in files as follows:
 
- * **install.sql -** The DDL to create the pltap schema  and the pltap.tap package
- * **example.sql -** The DDL to create a users schema containing some unit tests predicated on the pltap.tap package.
- * **example_call.sql -** An example of how to call the unit tests from a SQL statement.
- 
+ * **sqlplus/sqlplus_install.sql -** The DDL to create the pltap schema and the pltap.tap package. In fact, the schema should be passed as a parameter to the script depending what you want to call the schema e.g. calling it pltap:
+```
+sqlplus SYSTEM/oracle @sqlplus/sqlplus_install.sql pltap
+```
+ * **sqlplus/sqlplus_example.sql -** The DDL to create a users schema containing some unit tests predicated on the pltap.tap package. This isn't required but populates an example schema with calls to the tap package.  The schema should be passed as a parameter e.g.
+```
+sqlplus SYSTEM/oracle @sqlplus/sqlplus_example.sql example_tap
+```
+ * **example_call.sql -** An example of how to call the unit tests from a SQL statement, given the example schema has been installed as example_tap.
+ * **Dockerfile -** Uses wnameless/oracle-xe-11g from Dockerhub to run sqlplus, install the TAP schema, and build a new image e.g.
+```
+docker build -t pltap/oracle-xe-11g ./
+docker run -d -p 49160:22 -p 49161:1521 pltap/oracle-xe-11g
+```
 User defined unit tests are created in a separate database package of the users choosing.  Each test is predicated on the **ok()** function (within the pltap.tap package):
 ```
 CREATE OR REPLACE PACKAGE example_tap.mytests
 AS
-	FUNCTION test_tap       RETURN VARCHAR2;   
+	FUNCTION test_tap       RETURN VARCHAR2; 
 END mytests;
 /
 CREATE OR REPLACE PACKAGE BODY example_tap.mytests

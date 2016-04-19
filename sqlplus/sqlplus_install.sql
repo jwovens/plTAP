@@ -1,20 +1,20 @@
+def pltap_schema=&1
 DECLARE
     user_not_exists EXCEPTION;
     PRAGMA EXCEPTION_INIT (user_not_exists, -01918);
 BEGIN
-    EXECUTE IMMEDIATE 'DROP USER pltap CASCADE';
+    EXECUTE IMMEDIATE 'DROP USER &pltap_schema CASCADE';
 EXCEPTION
     WHEN user_not_exists THEN NULL;
 END;
 /
-
-CREATE USER pltap IDENTIFIED BY hello
+CREATE USER &pltap_schema IDENTIFIED BY hello
 /
 
-CREATE OR REPLACE TYPE pltap.tapstream_tab_type AS TABLE OF VARCHAR2(8000)
+CREATE OR REPLACE TYPE &pltap_schema..tapstream_tab_type AS TABLE OF VARCHAR2(8000)
 /
 
-CREATE OR REPLACE PACKAGE pltap.tap
+CREATE OR REPLACE PACKAGE &pltap_schema..tap
 AUTHID CURRENT_USER
 AS
     FUNCTION ok(bool BOOLEAN, msg  VARCHAR2)    
@@ -58,7 +58,7 @@ AS
 END tap;
 /
 
-CREATE OR REPLACE PACKAGE body pltap.tap
+CREATE OR REPLACE PACKAGE body &pltap_schema..tap
 AS
     pl_field_separate  char(1) := chr(30);
     
@@ -179,7 +179,8 @@ AS
 END tap;
 /
 
-GRANT EXECUTE ON pltap.tap TO PUBLIC
+GRANT EXECUTE ON &pltap_schema..tap TO PUBLIC
 /
-CREATE OR REPLACE PUBLIC SYNONYM tap FOR pltap.tap
+CREATE OR REPLACE PUBLIC SYNONYM tap FOR &pltap_schema..tap
 /
+
