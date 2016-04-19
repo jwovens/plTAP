@@ -9,7 +9,7 @@ This project has taken inspiration from [PostgreSQL's excellent pgTAP extension]
 
 This code contains Oracle SQL and PL/SQL only, in files as follows:
 
- * **sqlplus/sqlplus_install.sql -** The DDL to create the pltap schema and the pltap.tap package. In fact, the schema should be passed as a parameter to the script depending what you want to call the schema e.g. calling the it pltap:
+ * **sqlplus/sqlplus_install.sql -** The DDL to create the pltap schema and the pltap.tap package. In fact, the schema should be passed as a parameter to the script depending what you want to call the schema e.g. calling it pltap:
 ```
 sqlplus SYSTEM/oracle @sqlplus/sqlplus_install.sql pltap
 ```
