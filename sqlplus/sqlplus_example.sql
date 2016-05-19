@@ -27,6 +27,8 @@ AS
     FUNCTION test_tap_11    RETURN VARCHAR2;
     FUNCTION test_tap_12    RETURN VARCHAR2;
     FUNCTION test_tap_13    RETURN VARCHAR2;
+    FUNCTION test_tap_14    RETURN VARCHAR2;
+    FUNCTION test_tap_15    RETURN VARCHAR2;
     
 END mytests;
 /
@@ -111,6 +113,28 @@ AS
     BEGIN
         RETURN tap.cmp_ok(sqrt(2),'>=',1.4,'test that root2 is >= 1.4');
     END test_tap_13;    
+--------------------------------------------------------------------------------
+    FUNCTION test_tap_14 RETURN VARCHAR2
+    IS
+
+    l_expected_users string_tab_type := string_tab_type('PLTAP','SYS','XDB');
+  
+    BEGIN
+        RETURN tap.is_subset_of_sql(l_expected_users,
+                                   'SELECT username from all_users',
+                                   'test that known users are in all_users');
+    END test_tap_14;
+--------------------------------------------------------------------------------
+    FUNCTION test_tap_15 RETURN VARCHAR2
+    IS
+
+    l_expected_users string_tab_type := string_tab_type('PLTAP','SYS','XDB','bad');
+  
+    BEGIN
+        RETURN tap.is_subset_of_sql(l_expected_users,
+                                   'SELECT username from all_users',
+                                   'test that ~known users are in all_users');
+    END test_tap_15;
 --------------------------------------------------------------------------------
     
 END mytests;
