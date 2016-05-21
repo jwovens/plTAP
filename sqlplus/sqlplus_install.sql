@@ -14,7 +14,7 @@ CREATE USER &pltap_schema IDENTIFIED BY hello
 CREATE OR REPLACE TYPE &pltap_schema..tapstream_tab_type AS TABLE OF VARCHAR2(8000)
 /
 
-CREATE OR REPLACE TYPE &pltap_schema..string_tab_type AS TABLE OF VARCHAR2(8000)
+CREATE OR REPLACE TYPE &pltap_schema..varargs AS TABLE OF VARCHAR2(8000)
 /
 
 CREATE OR REPLACE PACKAGE &pltap_schema..tap
@@ -60,7 +60,7 @@ AS
 
     -- Test that expected nested table of strings is contained within single-column
     -- results set given by sqlstring
-    FUNCTION is_subset_of_sql(expected string_tab_type, sqlstring VARCHAR2, msg VARCHAR2)
+    FUNCTION is_subset_of_sql(expected varargs, sqlstring VARCHAR2, msg VARCHAR2)
     RETURN VARCHAR2;
         
 END tap;
@@ -185,11 +185,11 @@ AS
         RETURN ok(l_res=1, msg);
     END cmp_ok; 
 --------------------------------------------------------------------------------
-    FUNCTION is_subset_of_sql(expected string_tab_type, sqlstring VARCHAR2, msg VARCHAR2)
+    FUNCTION is_subset_of_sql(expected varargs, sqlstring VARCHAR2, msg VARCHAR2)
     RETURN VARCHAR2
     AS
         l_csr    sys_refcursor;
-        l_actual string_tab_type;
+        l_actual varargs;
     BEGIN
         OPEN  l_csr FOR sqlstring;
         FETCH l_csr BULK COLLECT INTO l_actual;
@@ -205,8 +205,8 @@ GRANT EXECUTE ON &pltap_schema..tap TO PUBLIC
 CREATE OR REPLACE PUBLIC SYNONYM tap FOR &pltap_schema..tap
 /
 
-GRANT EXECUTE ON &pltap_schema..string_tab_type TO PUBLIC
+GRANT EXECUTE ON &pltap_schema..varargs TO PUBLIC
 /
-CREATE OR REPLACE PUBLIC SYNONYM string_tab_type FOR &pltap_schema..string_tab_type
+CREATE OR REPLACE PUBLIC SYNONYM varargs FOR &pltap_schema..varargs
 /
 

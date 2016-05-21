@@ -117,7 +117,7 @@ AS
     FUNCTION test_tap_14 RETURN VARCHAR2
     IS
 
-    l_expected_users string_tab_type := string_tab_type('PLTAP','SYS','XDB');
+    l_expected_users varargs := varargs('PLTAP','SYS','XDB');
   
     BEGIN
         RETURN tap.is_subset_of_sql(l_expected_users,
@@ -128,7 +128,7 @@ AS
     FUNCTION test_tap_15 RETURN VARCHAR2
     IS
 
-    l_expected_users string_tab_type := string_tab_type('PLTAP','SYS','XDB','bad');
+    l_expected_users varargs := varargs('PLTAP','SYS','XDB','bad',1,2,3);
   
     BEGIN
         RETURN tap.is_subset_of_sql(l_expected_users,
